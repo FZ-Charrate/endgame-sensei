@@ -191,10 +191,18 @@ def rl_policy(board, agent, epsilon=0.1):
 
     best_move = None
     best_value = float("-inf")
+    best_value_moves = [] #For tie-breaking, we will keep track of all moves that have the same best value, and then randomly choose one of them at the end.
     for move in legal_moves:
         value = agent.get_q_value(board, move) #TODO: This should be defined later in the agent class
         if value > best_value:
             best_value = value
             best_move = move
+            best_value_moves = [move] #empty the list and add the new best move
+        elif value == best_value:
+            # Tie-breaking: randomly choose between equally good moves, so the agent doesn't always choose the same move just because it came first.
+            best_value_moves.append(move)
+
+    if best_value_moves:
+        return random.choice(best_value_moves)
 
     return best_move
